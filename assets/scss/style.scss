@@ -1,0 +1,57 @@
+.troms-analitics {
+  padding: 1.4rem;
+  padding-left: 0;
+  &__title {
+    font-size: 1.4rem;
+    margin: 1.6rem auto;
+  }
+  &__form {
+    display: flex;
+    gap: .8rem;
+    flex-direction: wrap;
+    margin: .8rem auto;
+    align-items: center;
+  }
+  &__id-column {
+    width: 10%;
+    &:not(.column-title) {
+      padding-left: 1rem;
+    }
+  }
+  &__pv-column:not(._._._) {
+    cursor: pointer;
+    color: #12617e;
+    &::after {
+      content: "▼";
+      margin-left: .8rem;
+    }
+    &.is-active {
+      &::after {
+        content: "▲";
+      }
+    }
+  }
+  &__links {
+    display: flex;
+    margin-top: .4rem;
+    opacity: 0;
+    gap: .6rem;
+    pointer-events: none;
+    transition: opacity .1s;
+  }
+  &__data-row {
+    &:hover {
+      .troms-analitics__links {
+        opacity: 1;
+        pointer-events: all;
+      }
+    }
+  }
+  &__thumbnail {
+    img {
+      width: 200px;
+      height: auto;
+      object-fit: contain;
+    }
+  }
+}
