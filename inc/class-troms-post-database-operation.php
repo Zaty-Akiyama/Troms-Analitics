@@ -63,7 +63,8 @@ class Post_Database_Operation {
       "Chatwork LinkPreview",
       "Linespider",
       "monitoring",
-      "Google-InspectionTool"
+      "Google-InspectionTool",
+      "YaK"
     );
     foreach( $bots as $bot ) {
       if (stripos( $ua, $bot ) !== false){
