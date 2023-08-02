@@ -5,7 +5,7 @@
  * Plugin Name: Troms Analitics
  *
  * Description: ZATY開発のアナリティクスプラグインです。
- * Version: 1.1.0
+ * Version: 1.2.0
  * Author: ZATY
  * Author URI: https://zaty.jp
  * Text Domain troms-analitics
@@ -62,6 +62,7 @@ class Troms_Analitics {
     include_once( TROMS_PLUGIN_DIR . 'inc/class-troms-drop-post-views-table.php' );
     include_once( TROMS_PLUGIN_DIR . 'inc/class-troms-analitics-admin.php' );
 
+    include_once( TROMS_PLUGIN_DIR . 'inc/class-troms-views-count-entry-point.php' );
     include_once( TROMS_PLUGIN_DIR . 'inc/class-troms-post-database-operation.php' );
   }
     
@@ -71,11 +72,15 @@ class Troms_Analitics {
 
     $custom_fields = new Troms_Custom_Fields();
     $custom_fields->plugin_activation();
+
+    flush_rewrite_rules();
   }
 
   public function plugin_deactivation () {
     $drop_post_views_table = new Troms_Drop_Post_Views_Table();
     $drop_post_views_table->drop_table();
+
+    flush_rewrite_rules();
   }
 
 }

@@ -9,9 +9,11 @@ class Post_Database_Operation {
   }
 
   private function hooks () {
-    add_action( 'template_redirect', [$this, 'record_post_view'] );
+    add_action( 'wp_head', [$this, 'insert_post_view_script'] );
 
     add_filter( 'default_views_count', [$this, 'default_views_count'], 10, 2 );
+
+    add_action( 'troms_views_count', [$this, 'record_post_views'] );
   }
 
   public function default_views_count ( $_, $id ) {
@@ -75,26 +77,42 @@ class Post_Database_Operation {
   }
 
   // 記事の閲覧数を記録
-  public function record_post_view() {
+  public function insert_post_view_script () {
     if ( ! is_single() || $this->is_bot() || is_user_logged_in() ) return;
 
-    global $post, $wpdb;
-    $table_name = $wpdb->prefix . self::TABLE_NAME;
+    global $post;
     $post_id = $post->ID;
-    $current_time = current_time( 'mysql' );
     $referrer = $_SERVER['HTTP_REFERER'] ?? '(direct)';
     $ua = $_SERVER["HTTP_USER_AGENT"];
     $ip = $_SERVER["REMOTE_ADDR"];
 
-    $insert_data = array(
-      'post_id'    => $post_id,
-      'view_date'  => $current_time,
-      'referrer'   => $referrer,
-      'ua'         => $ua,
-      'ip'         => $ip
-    );
+    $home_url = home_url();
+    $script_HTML = <<<HTML
+    <script>
+      (function() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '$home_url/wp-json/troms/views_count/$post_id/', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({
+          action: 'troms_views_count',
+          post_id: $post_id,
+          referrer: '$referrer',
+          user_agent: '$ua',
+          ip: '$ip'
+        }));
+      })();
+    </script>
+    HTML;
+    echo $script_HTML;
+  }
+
+  public function record_post_views ( $insert_data ) {
+    global $wpdb;
+    $table_name = $wpdb->prefix . self::TABLE_NAME;
 
     $wpdb->insert( $table_name, $insert_data );
+
+    $post_id = $insert_data['post_id'];
 
     $post_views_metadata = get_post_meta( $post_id, '_views_count', true);
     if( $post_views_metadata === "" ) {
