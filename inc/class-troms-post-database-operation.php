@@ -30,7 +30,6 @@ class Post_Database_Operation {
       "Twitterbot",
       "APIs-Google",
       "Googlebot-Image",
-      "Googlebot-News",
       "dataminr.com",
       "AhrefsBot",
       "comscore.com",
@@ -38,7 +37,7 @@ class Post_Database_Operation {
       "bingbot",
       "CriteoBot",
       "admantx",
-      "Yeti/0.01",
+      "Yeti",
       "spider",
       "facebookexternalhit",
       "Facebot",
@@ -57,7 +56,14 @@ class Post_Database_Operation {
       "BLEXBot",
       "Mail.RU_Bot",
       "DuckDuckBot",
-      "Swiftbot"
+      "Swiftbot",
+      "SkypeUriPreview",
+      "Discordbot",
+      "Pinterestbot",
+      "Chatwork LinkPreview",
+      "Linespider",
+      "monitoring",
+      "Google-InspectionTool"
     );
     foreach( $bots as $bot ) {
       if (stripos( $ua, $bot ) !== false){
@@ -76,14 +82,18 @@ class Post_Database_Operation {
     $post_id = $post->ID;
     $current_time = current_time( 'mysql' );
     $referrer = $_SERVER['HTTP_REFERER'] ?? '(direct)';
-    $wpdb->insert(
-        $table_name,
-        array(
-            'post_id'    => $post_id,
-            'view_date'  => $current_time,
-            'referrer'   => $referrer,
-        )
+    $ua = $_SERVER["HTTP_USER_AGENT"];
+    $ip = $_SERVER["REMOTE_ADDR"];
+
+    $insert_data = array(
+      'post_id'    => $post_id,
+      'view_date'  => $current_time,
+      'referrer'   => $referrer,
+      'ua'         => $ua,
+      'ip'         => $ip
     );
+
+    $wpdb->insert( $table_name, $insert_data );
 
     $post_views_metadata = get_post_meta( $post_id, '_views_count', true);
     if( $post_views_metadata === "" ) {

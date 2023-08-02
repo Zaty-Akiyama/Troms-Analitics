@@ -29,8 +29,10 @@ class Troms_Create_Post_Views_Table {
     $sql = "CREATE TABLE $table_name (
         id mediumint(9) NOT NULL AUTO_INCREMENT,
         post_id mediumint(9) NOT NULL,
-        view_date datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+        view_date datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
         referrer varchar(255) DEFAULT '' NOT NULL,
+        ua varchar(255) DEFAULT '' NOT NULL,
+        ip varchar(255) DEFAULT '' NOT NULL,
         PRIMARY KEY (id)
     ) $charset_collate;";
 
